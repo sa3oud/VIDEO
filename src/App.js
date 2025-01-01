@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+HEAD
 import logo from './logo.svg';
 import './App.css';
 
@@ -22,7 +22,6 @@ function App() {
     </div>
   );
 }
-=======
 import React, { useState } from 'react';
 import { Camera, Swords } from 'lucide-react';
 import VideoRecorder from './components/VideoRecorder';
@@ -62,6 +61,6 @@ const App = () => {
       return renderHome();
   }
 };
->>>>>>> origin/main
+origin/main
 
 export default App;
