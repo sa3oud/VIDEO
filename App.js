@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Square, Mic } from 'lucide-react';
+import BattleMode from './components/BattleMode'; // Assuming this is a valid component path
 
-const App = () => {
+const MainApp = () => {
   const [recording, setRecording] = useState(false);
   const [wordCount, setWordCount] = useState(0);
   const [transcript, setTranscript] = useState('');
@@ -11,31 +12,32 @@ const App = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
-        audio: true 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
       });
       streamRef.current = stream;
       const videoElement = document.getElementById('preview');
       videoElement.srcObject = stream;
-      
+
       mediaRecorderRef.current = new MediaRecorder(stream);
-      
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      
+
       recognitionRef.current.onresult = (event) => {
         let fullTranscript = '';
-        for (let i = 0; i < event.results.length; i++) {
+        for (let i = 0; event.results && i < event.results.length; i++) {
           fullTranscript += event.results[i][0].transcript + ' ';
         }
         setTranscript(fullTranscript);
         const words = fullTranscript.trim().split(/\s+/);
         setWordCount(words.length);
       };
-      
+
       recognitionRef.current.start();
       mediaRecorderRef.current.start();
       setRecording(true);
@@ -47,7 +49,7 @@ const App = () => {
   const stopRecording = () => {
     if (mediaRecorderRef.current && streamRef.current) {
       mediaRecorderRef.current.stop();
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       recognitionRef.current.stop();
       setRecording(false);
     }
@@ -57,14 +59,14 @@ const App = () => {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="relative mb-6">
-          <video 
-            id="preview" 
-            autoPlay 
-            muted 
+          <video
+            id="preview"
+            autoPlay
+            muted
             playsInline
             className="w-full h-96 object-cover rounded-2xl bg-gray-900 shadow-lg"
           />
-          
+
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
             {!recording ? (
               <button
@@ -103,11 +105,13 @@ const App = () => {
             </div>
             <p className="text-4xl font-bold text-blue-600">{wordCount}</p>
           </div>
-          
+
           <div className="bg-white p-6 rounded-2xl shadow-md">
             <h3 className="text-lg font-semibold mb-3">Live Transcript</h3>
             <div className="h-32 overflow-y-auto">
-              <p className="text-gray-600 whitespace-pre-wrap">{transcript || 'Transcript will appear here...'}</p>
+              <p className="text-gray-600 whitespace-pre-wrap">
+                {transcript || 'Transcript will appear here...'}
+              </p>
             </div>
           </div>
         </div>
@@ -116,4 +120,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default MainApp;
